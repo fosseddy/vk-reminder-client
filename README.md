@@ -1,1 +1,1 @@
-# Vk Reminder Client
+# VK Reminder Client
