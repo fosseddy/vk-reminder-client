@@ -1,18 +1,4 @@
 <script>
-export default {
-	name: "",
-
-	data() {
-		return {
-		};
-	},
-
-	computed: {
-	},
-
-	methods: {
-	}
-};
 </script>
 
 <template>
