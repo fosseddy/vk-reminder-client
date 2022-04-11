@@ -16,7 +16,8 @@ export default {
 
 	methods: {
 		async logout() {
-			await vkLogout().catch(console.error);
+			await vkLogout();
+			localStorage.removeItem("userid");
 			this.$router.push("/");
 		}
 	},

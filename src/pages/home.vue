@@ -1,17 +1,5 @@
 <script>
-async function vkLogin() {
-	return new Promise(resolve => VK.Auth.login(resolve));
-}
-
-async function getUserInfo(id) {
-	return new Promise(resolve =>
-		VK.Api.call(
-			"users.get",
-			{ user_ids: id, fields: "photo_100", v: "5.131" },
-			resolve
-		)
-	);
-}
+import * as vk from "@/vk";
 
 export default {
 	data() {
@@ -22,12 +10,12 @@ export default {
 
 	methods: {
 		async login() {
-			const res = await vkLogin().catch(console.error);
+			const res = await vk.login();
 
 			if (res.session) {
 				const { id } = res.session.user;
 				const { response } =
-					await getUserInfo(id).catch(console.error);
+					await vk.getUserInfo(id);
 				const user = response[0];
 
 				if (user) {
@@ -37,6 +25,7 @@ export default {
 						lastname: user.last_name,
 						avatar: user.photo_100
 					});
+					localStorage.setItem("userid", id);
 					this.$router.push("/dashboard");
 				}
 			}
