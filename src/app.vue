@@ -10,13 +10,10 @@ export default {
 
 	async created() {
 		this.loading = true;
-		const res = await vk.getLoginStatus().catch(err => {
-			console.log("WTF LOL");
-			console.log(err);
-		});
+		const res = await vk.getLoginStatus();
+		const id = localStorage.getItem("userid");
 
-		if (res.session) {
-			const id = localStorage.getItem("userid");
+		if (res.session && id) {
 			const { response } = await vk.getUserInfo(id);
 			const user = response[0];
 

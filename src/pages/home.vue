@@ -11,11 +11,10 @@ export default {
 	methods: {
 		async login() {
 			const res = await vk.login();
-
+			console.log(res);
 			if (res.session) {
 				const { id } = res.session.user;
-				const { response } =
-					await vk.getUserInfo(id);
+				const { response } = await vk.getUserInfo(id);
 				const user = response[0];
 
 				if (user) {
