@@ -13,6 +13,11 @@ const router = createRouter({
 			component: () => import("@/pages/about.vue")
 		},
 		{
+			path: "/allow-messages",
+			component: () => import("@/pages/allow-messages.vue"),
+			meta: { private: true }
+		},
+		{
 			path: "/dashboard",
 			component: () => import("@/pages/dashboard.vue"),
 			meta: { private: true }
