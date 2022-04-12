@@ -4,7 +4,7 @@ import * as vk from "@/vk";
 export default {
 	computed: {
 		user() {
-			return this.$store.state.auth.user;
+			return this.$store.getters["auth/user"];
 		}
 	},
 
@@ -12,6 +12,7 @@ export default {
 		async logout() {
 			await vk.logout();
 			localStorage.removeItem("userid");
+			this.$store.commit("auth/setUser", null);
 			this.$router.push("/");
 		}
 	}

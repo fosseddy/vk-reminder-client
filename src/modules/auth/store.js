@@ -1,3 +1,5 @@
+import * as vk from "@/vk";
+
 const auth = {
 	namespaced: true,
 
@@ -7,12 +9,17 @@ const auth = {
 		};
 	},
 
+	getters: {
+		user(state) {
+			return state.user || {};
+		}
+	},
+
 	mutations: {
 		setUser(state, user) {
 			state.user = user;
 		}
 	}
-
 };
 
 export { auth };
