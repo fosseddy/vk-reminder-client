@@ -1,13 +1,7 @@
 <script>
-async function vkLogout() {
-	return new Promise(resolve => VK.Auth.logout(res => resolve(res)));
-}
+import * as vk from "@/vk";
 
 export default {
-	data() {
-		return {};
-	},
-
 	computed: {
 		user() {
 			return this.$store.state.auth.user;
@@ -16,11 +10,11 @@ export default {
 
 	methods: {
 		async logout() {
-			await vkLogout();
+			await vk.logout();
 			localStorage.removeItem("userid");
 			this.$router.push("/");
 		}
-	},
+	}
 };
 </script>
 

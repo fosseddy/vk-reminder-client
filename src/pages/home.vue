@@ -2,18 +2,12 @@
 import * as vk from "@/vk";
 
 export default {
-	data() {
-		return {};
-	},
-
-	computed: {},
-
 	methods: {
 		async login() {
-			const res = await vk.login();
-			console.log(res);
-			if (res.session) {
-				const { id } = res.session.user;
+			const { session } = await vk.login();
+
+			if (session) {
+				const { id } = session.user;
 				const { response } = await vk.getUserInfo(id);
 				const user = response[0];
 
@@ -24,7 +18,9 @@ export default {
 						lastname: user.last_name,
 						avatar: user.photo_100
 					});
+
 					localStorage.setItem("userid", id);
+
 					this.$router.push("/dashboard");
 				}
 			}

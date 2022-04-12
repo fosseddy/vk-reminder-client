@@ -3,17 +3,16 @@ import * as vk from "@/vk";
 
 export default {
 	data() {
-		return {
-			loading: false
-		};
+		return { loading: false };
 	},
 
 	async created() {
 		this.loading = true;
-		const res = await vk.getLoginStatus();
+
+		const { session } = await vk.getLoginStatus();
 		const id = localStorage.getItem("userid");
 
-		if (res.session && id) {
+		if (session && id) {
 			const { response } = await vk.getUserInfo(id);
 			const user = response[0];
 
@@ -24,6 +23,7 @@ export default {
 					lastname: user.last_name,
 					avatar: user.photo_100
 				});
+
 				this.$router.push("/dashboard");
 			}
 		}
