@@ -8,6 +8,10 @@ const router = createRouter({
 		{
 			path: "/dashboard",
 			component: () => import("@/pages/dashboard.vue")
+		},
+		{
+			path: "/:unknown(.*)*",
+			component: () => import("@/pages/not-found.vue")
 		}
 	]
 });
