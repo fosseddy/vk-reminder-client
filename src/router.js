@@ -7,12 +7,10 @@ const router = createRouter({
 		{
 			path: "/",
 			component: () => import("@/pages/home.vue"),
-			meta: { private: false }
 		},
 		{
 			path: "/about",
 			component: () => import("@/pages/about.vue"),
-			meta: { private: false }
 		},
 		{
 			path: "/dashboard",
@@ -22,20 +20,15 @@ const router = createRouter({
 		{
 			path: "/:unknown(.*)*",
 			component: () => import("@/pages/not-found.vue"),
-			meta: { private: false }
 		}
 	]
 });
 
 router.beforeEach((to, from) => {
-	console.log(to.path, store.state.auth.user);
-
-	if (to.meta.private) {
+	if (to.meta.private && !store.state.auth.user) {
 		console.assert(to.path !== "/", "infinite redirect to login");
-		if (!store.state.auth.user) return "/";
+		return "/";
 	}
-
-	if (to.path == "/" && store.state.auth.user) return "/dashboard";
 
 	return true;
 });
