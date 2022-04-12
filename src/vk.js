@@ -3,7 +3,7 @@ async function login() {
 }
 
 async function logout() {
-	return new Promise(resolve => VK.Auth.logout(res => resolve(res)));
+	return new Promise(resolve => VK.Auth.logout(resolve));
 }
 
 async function getLoginStatus() {
