@@ -6,11 +6,11 @@ const router = createRouter({
 	routes: [
 		{
 			path: "/",
-			component: () => import("@/pages/home.vue"),
+			component: () => import("@/pages/home.vue")
 		},
 		{
 			path: "/about",
-			component: () => import("@/pages/about.vue"),
+			component: () => import("@/pages/about.vue")
 		},
 		{
 			path: "/dashboard",
@@ -19,7 +19,7 @@ const router = createRouter({
 		},
 		{
 			path: "/:unknown(.*)*",
-			component: () => import("@/pages/not-found.vue"),
+			component: () => import("@/pages/not-found.vue")
 		}
 	]
 });
