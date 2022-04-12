@@ -20,4 +20,11 @@ async function getUserInfo(id) {
 	);
 }
 
-export { login, logout, getLoginStatus, getUserInfo };
+function init() {
+	VK.Auth.loginAsync = login;
+	VK.Auth.logoutAsync = logout;
+	VK.Auth.getLoginStatusAsync = getLoginStatus;
+	VK.Api.getUserInfo = getUserInfo;
+}
+
+export { init };

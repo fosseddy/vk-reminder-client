@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import * as vk from "@/vk";
 
 const auth = {
 	namespaced: true,

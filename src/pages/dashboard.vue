@@ -1,6 +1,4 @@
 <script>
-import * as vk from "@/vk";
-
 export default {
 	computed: {
 		user() {
@@ -10,7 +8,7 @@ export default {
 
 	methods: {
 		async logout() {
-			await vk.logout();
+			await VK.Auth.logoutAsync();
 			localStorage.removeItem("userid");
 			this.$store.commit("auth/setUser", null);
 			this.$router.push("/");
