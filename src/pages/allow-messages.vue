@@ -1,35 +1,22 @@
 <script>
 export default {
-  data() {
-    return {
-    };
+  created() {
+    VK.Observer.subscribe("widgets.allowMessagesFromCommunity.allowed", () =>
+        this.$router.push("/dashboard")
+    );
   },
 
-  created() {
-    VK.Observer.subscribe(
-      "widgets.allowMessagesFromCommunity.allowed",
-      id => {
-        console.log(id, "allowed");
-      }
-    );
-
-    VK.Observer.subscribe(
-      "widgets.allowMessagesFromCommunity.denied",
-      id => {
-        console.log(id, "denied");
-      }
-    );
-
+  mounted() {
     VK.Widgets.AllowMessagesFromCommunity(
       "vk_send_message",
       { height: 30 },
+      // @TODO(art): get community id from server?
       202435034
     );
   },
 
   unmounted() {
     VK.Observer.unsubscribe("widgets.allowMessagesFromCommunity.allowed");
-    VK.Observer.unsubscribe("widgets.allowMessagesFromCommunity.denied");
   }
 };
 </script>

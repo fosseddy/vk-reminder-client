@@ -7,6 +7,7 @@ export default {
   },
 
   methods: {
+    // @TODO(art): use logout mutation
     async logout() {
       await VK.Auth.logoutAsync();
       localStorage.removeItem("userid");
