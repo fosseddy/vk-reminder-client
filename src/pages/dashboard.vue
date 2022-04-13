@@ -9,7 +9,7 @@ export default {
   methods: {
     async logout() {
       await VK.Auth.logoutAsync();
-      localStorage.removeItem("userid");
+      localStorage.removeItem("user-id");
       this.$store.commit("auth/logout");
       this.$router.push("/");
     }
