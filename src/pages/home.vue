@@ -3,14 +3,6 @@ import * as http from "@/http";
 
 export default {
   methods: {
-    // @TODO(art): delete this
-    async logout() {
-      await VK.Auth.logoutAsync();
-      localStorage.removeItem("userid");
-      this.$store.commit("auth/setUser", null);
-      this.$router.push("/");
-    },
-
     async login() {
       const { session } = await VK.Auth.loginAsync();
 
@@ -25,28 +17,27 @@ export default {
 
       delete session.user;
       const res = await http.areMessagesAllowed(session, user.id);
+
+      // @TODO(art): handle error
       if (res.error) {
-        // @TODO(art): handle error
         console.error(res.error);
         return;
       }
 
-      console.log(res);
+      const payload = {
+        session,
+        user: {
+          id: user.id,
+          firstname: user.first_name,
+          lastname: user.last_name,
+          avatar: user.photo_100
+        }
+      };
 
-      this.$store.commit("auth/setUser", {
-        id: user.id,
-        firstname: user.first_name,
-        lastname: user.last_name,
-        avatar: user.photo_100
-      });
+      this.$store.commit("auth/login", payload);
+      localStorage.setItem("user-id", id);
 
-      localStorage.setItem("userid", id);
-
-      if (res.data.allowed) {
-        this.$router.push("/dashboard");
-      } else {
-        this.$router.push("/allow-messages");
-      }
+      this.$router.push(res.data.allowed ? "/dashboard" : "/allow-messages");
     }
   }
 };
@@ -58,6 +49,5 @@ export default {
   <p>WebApp to create reminders, which will be sent to you in VK.</p>
 
   <button @click="login">Login</button>
-  <button @click="logout">logout</button>
 </div>
 </template>

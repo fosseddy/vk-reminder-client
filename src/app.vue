@@ -1,33 +1,41 @@
 <script>
+import * as http from "@/http";
+
 export default {
-  //data() {
-  //  return { loading: false };
-  //},
+  async created() {
+    const { session } = await VK.Auth.getLoginStatusAsync();
+    const id = localStorage.getItem("user-id");
 
-  //async created() {
-  //  this.loading = true;
+    if (!session || !id) return;
 
-  //  const { session } = await vk.getLoginStatus();
-  //  const id = localStorage.getItem("userid");
+    const { response } = await VK.Api.getUserInfo(id);
+    const user = response[0];
 
-  //  if (session && id) {
-  //    const { response } = await VK.Api.getUserInfo(id);
-  //    const user = response[0];
+    // @NOTE(art): technically this will never happen
+    if (!user) return;
 
-  //    if (user) {
-  //      this.$store.commit("auth/setUser", {
-  //        id: user.id,
-  //        firstname: user.first_name,
-  //        lastname: user.last_name,
-  //        avatar: user.photo_100
-  //      });
+    delete session.user;
+    const res = await http.areMessagesAllowed(session, user.id);
 
-  //      this.$router.push("/dashboard");
-  //    }
-  //  }
+    // @TODO(art): handle error
+    if (res.error) {
+      console.error(res.error);
+      return;
+    }
 
-  //  this.loading = false;
-  //}
+    const payload = {
+      session,
+      user: {
+        id: user.id,
+        firstname: user.first_name,
+        lastname: user.last_name,
+        avatar: user.photo_100
+      }
+    };
+
+    this.$store.commit("auth/login", payload);
+    this.$router.push(res.data.allowed ? "/dashboard" : "/allow-messages");
+  }
 };
 </script>
 
