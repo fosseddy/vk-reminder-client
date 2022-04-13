@@ -1,10 +1,10 @@
 import { createApp } from "vue";
 import { store } from "@/store";
 import { router } from "@/router";
-import * as vk from "@/vk";
-import App from "@/app.vue";
 
-vk.init();
+import "@/vk";
+
+import App from "@/app.vue";
 
 createApp(App)
 	.use(store)
