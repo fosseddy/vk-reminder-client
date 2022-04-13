@@ -17,14 +17,11 @@ export default {
       if (!session) return;
 
       const { id } = session.user;
-      //debugger;
       const { response } = await VK.Api.getUserInfo(id);
       const user = response[0];
 
       // @NOTE(art): technically this will never happen
-      if (!user) {
-        return await VK.Auth.logoutAsync();
-      }
+      if (!user) return;
 
       delete session.user;
       const res = await http.areMessagesAllowed(session, user.id);
