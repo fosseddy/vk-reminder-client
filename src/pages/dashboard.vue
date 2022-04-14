@@ -1,5 +1,9 @@
 <script>
+import VKAllowMessages from "@/components/vk-allow-messages.vue";
+
 export default {
+  components: { VKAllowMessages },
+
   computed: {
     user() {
       return this.$store.getters["auth/user"];
@@ -12,27 +16,12 @@ export default {
       localStorage.removeItem("user-id");
       this.$store.commit("auth/logout");
       this.$router.push("/");
+    },
+
+    // @TODO(art): move this to settings page?
+    async onDeny() {
+      await this.logout();
     }
-  },
-
-  created() {
-    VK.Observer.subscribe(
-      "widgets.allowMessagesFromCommunity.denied",
-      async () => await this.logout()
-    );
-  },
-
-  mounted() {
-    VK.Widgets.AllowMessagesFromCommunity(
-      "vk_send_message",
-      { height: 30 },
-      // @TODO(art): get community id from server?
-      202435034
-    );
-  },
-
-  unmounted() {
-    VK.Observer.unsubscribe("widgets.allowMessagesFromCommunity.denied");
   }
 };
 </script>
@@ -46,7 +35,9 @@ export default {
 
   <button @click="logout">Logout</button>
   <br /><br />
-  <div id="vk_send_message"></div>
+
+  <!-- @TODO(art): move this to settings page? -->
+  <VKAllowMessages @deny="onDeny" />
 </div>
 </template>
 

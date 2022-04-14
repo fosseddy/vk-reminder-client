@@ -1,29 +1,20 @@
 <script>
+import VKAllowMessages from "@/components/vk-allow-messages.vue";
+
 export default {
-  created() {
-    VK.Observer.subscribe("widgets.allowMessagesFromCommunity.allowed", () =>
-        this.$router.push("/dashboard")
-    );
-  },
+  components: { VKAllowMessages },
 
-  mounted() {
-    VK.Widgets.AllowMessagesFromCommunity(
-      "vk_send_message",
-      { height: 30 },
-      // @TODO(art): get community id from server?
-      202435034
-    );
-  },
-
-  unmounted() {
-    VK.Observer.unsubscribe("widgets.allowMessagesFromCommunity.allowed");
+  methods: {
+    onAllow() {
+      this.$router.push("/dashboard");
+    }
   }
-};
+}
 </script>
 
 <template>
 <div>
   <h1>This is Allow Messages Page</h1>
-  <div id="vk_send_message"></div>
+  <VKAllowMessages @allow="onAllow" />
 </div>
 </template>
