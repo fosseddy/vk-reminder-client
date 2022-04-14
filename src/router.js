@@ -9,10 +9,6 @@ const router = createRouter({
       component: () => import("@/pages/home.vue")
     },
     {
-      path: "/about",
-      component: () => import("@/pages/about.vue")
-    },
-    {
       path: "/allow-messages",
       component: () => import("@/pages/allow-messages.vue"),
       meta: { private: true }
