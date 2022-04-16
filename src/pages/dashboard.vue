@@ -1,5 +1,6 @@
 <script>
 import VKAllowMessages from "@/components/vk-allow-messages.vue";
+import * as storage from "@/storage";
 
 export default {
   components: { VKAllowMessages },
@@ -13,8 +14,9 @@ export default {
   methods: {
     async logout() {
       await VK.Auth.logoutAsync();
-      localStorage.removeItem("user-id");
-      this.$store.commit("auth/logout");
+      storage.UserId.remove();
+      storage.SessionHeader.remove();
+      this.$store.commit("auth/setUser", null);
       this.$router.push("/");
     },
 

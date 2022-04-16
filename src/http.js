@@ -1,33 +1,20 @@
+import * as storage from "@/storage";
+
 // @TODO(art): make it env dependent
 const apiUrl = "http://localhost:5000/api";
 
-async function areMessagesAllowed(session, userId) {
-  const result = { status: -1, data: null, error: null };
-
-  try {
-    const res = await fetch(apiUrl + "/check-messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ session, userId })
-    });
-
-    result.status = res.status;
-
-    const data = await res.json();
-    if (data.error) {
-      result.error = data.error;
-      return result;
+async function areMessagesAllowed() {
+  const res = await fetch(apiUrl + "/messages/check", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "VK-Session": storage.SessionHeader.get()
     }
+  });
 
-    result.data = data.data;
-    return result;
-
-  } catch (err) {
-    result.error = err;
-    return result;
-  }
+  return res.json();
 }
 
-export { areMessagesAllowed };
+export {
+  areMessagesAllowed
+};

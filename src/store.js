@@ -5,8 +5,7 @@ const auth = {
 
   state() {
     return {
-      user: null,
-      session: null
+      user: null
     };
   },
 
@@ -19,20 +18,6 @@ const auth = {
   mutations: {
     setUser(state, user) {
       state.user = user;
-    },
-
-    setSession(state, session) {
-      state.session = session;
-    },
-
-    login(state, payload) {
-      state.user = payload.user;
-      state.session = payload.session;
-    },
-
-    logout(state) {
-      state.user = null;
-      state.session = null;
     }
   }
 };

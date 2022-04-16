@@ -1,10 +1,11 @@
 <script>
 import * as http from "@/http";
+import * as storage from "@/storage";
 
 export default {
   async created() {
     const { session } = await VK.Auth.getLoginStatusAsync();
-    const id = localStorage.getItem("user-id");
+    const id = storage.UserId.get();
 
     if (!session || !id) return;
 
@@ -15,25 +16,31 @@ export default {
     if (!user) return;
 
     delete session.user;
-    const res = await http.areMessagesAllowed(session, user.id);
+    storage.SessionHeader.set({
+      ...session,
+      userId: user.id
+    });
+
+    this.$store.commit("auth/setUser", {
+      id: user.id,
+      firstname: user.first_name,
+      lastname: user.last_name,
+      avatar: user.photo_100
+    });
+
+    let err = null;
+    const res = await http.areMessagesAllowed().catch(e => err = e);
+
+    // @TODO(art): handle error
+    if (err) {
+      return console.error(err);
+    }
 
     // @TODO(art): handle error
     if (res.error) {
-      console.error(res.error);
-      return;
+      return console.error(res.error);
     }
 
-    const payload = {
-      session,
-      user: {
-        id: user.id,
-        firstname: user.first_name,
-        lastname: user.last_name,
-        avatar: user.photo_100
-      }
-    };
-
-    this.$store.commit("auth/login", payload);
     this.$router.push(res.data.allowed ? "/dashboard" : "/allow-messages");
   }
 };
