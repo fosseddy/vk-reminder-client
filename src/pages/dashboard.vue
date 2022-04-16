@@ -1,9 +1,16 @@
 <script>
 import VKAllowMessages from "@/components/vk-allow-messages.vue";
+import * as http from "@/http";
 import * as storage from "@/storage";
 
 export default {
   components: { VKAllowMessages },
+
+  data() {
+    return {
+      reminders: []
+    };
+  },
 
   computed: {
     user() {
@@ -24,6 +31,23 @@ export default {
     async onDeny() {
       await this.logout();
     }
+  },
+
+  async created() {
+    let err = null;
+    const res = await http.getReminders().catch(e => err = e);
+
+    // @TODO(art): handle error
+    if (err) {
+      return console.error(err);
+    }
+
+    // @TODO(art): handle error
+    if (res.error) {
+      return console.error(res.error);
+    }
+
+    this.reminders = res.data.items;
   }
 };
 </script>
@@ -40,6 +64,18 @@ export default {
 
   <!-- @TODO(art): move this to settings page? -->
   <VKAllowMessages @deny="onDeny" />
+
+  <h2>Reminders</h2>
+
+  <form>
+    <input type="text" />
+    <input type="date" />
+    <button type="submit">Add</button>
+  </form>
+
+  <ul>
+    <li v-for="r in reminders">{{ r.text }}</li>
+  </ul>
 </div>
 </template>
 
