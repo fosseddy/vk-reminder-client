@@ -28,7 +28,27 @@ async function getReminders() {
   return res.json();
 }
 
+async function getReminder(id) {
+  const res = await fetch(apiUrl + `/reminder/${id}`, {
+    method: "GET",
+    headers: getHeaders()
+  });
+
+  return res.json();
+}
+
+async function createReminder({ text, date }) {
+  const res = await fetch(apiUrl + "/reminder", {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify({ text, date })
+  });
+
+  return res.json();
+}
+
 export {
   areMessagesAllowed,
-  getReminders
+  getReminders,
+  createReminder
 };

@@ -8,7 +8,9 @@ export default {
 
   data() {
     return {
-      reminders: []
+      reminders: [],
+      text: "",
+      date: ""
     };
   },
 
@@ -30,6 +32,31 @@ export default {
     // @TODO(art): move this to settings page?
     async onDeny() {
       await this.logout();
+    },
+
+    async addReminder() {
+      if (!this.text || !this.date) return;
+
+      let err = null;
+      const res = await http.createReminder({
+        text: this.text,
+        date: new Date(this.date).getTime()
+      }).catch(e => err = e);
+
+      // @TODO(art): handle error
+      if (err) {
+        return console.error(err);
+      }
+
+      // @TODO(art): handle error
+      if (res.error) {
+        return console.error(res.error);
+      }
+
+      this.reminders.push(res.data);
+
+      this.text = "";
+      this.date = "";
     }
   },
 
@@ -67,9 +94,9 @@ export default {
 
   <h2>Reminders</h2>
 
-  <form>
-    <input type="text" />
-    <input type="date" />
+  <form @submit.prevent="addReminder">
+    <input type="text" v-model="text" />
+    <input type="datetime-local" v-model="date" />
     <button type="submit">Add</button>
   </form>
 
