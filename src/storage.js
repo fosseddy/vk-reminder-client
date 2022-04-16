@@ -1,11 +1,5 @@
 const StorageItem = { key: null };
 
-StorageItem.create = function(key) {
-  return Object.create(StorageItem, {
-    key: { value: key }
-  });
-}
-
 StorageItem.get = function() {
   return localStorage.getItem(this.key);
 }
@@ -18,9 +12,15 @@ StorageItem.remove = function() {
   localStorage.removeItem(this.key);
 }
 
-const UserId = StorageItem.create("vk-user-id");
+function createStorageItem(key) {
+  return Object.create(StorageItem, {
+    key: { value: key }
+  });
+}
 
-const SessionHeader = StorageItem.create("vk-session-header");
+const UserId = createStorageItem("vk-user-id");
+
+const SessionHeader = createStorageItem("vk-session-header");
 SessionHeader.set = function(opts) {
   localStorage.setItem(
     this.key,
