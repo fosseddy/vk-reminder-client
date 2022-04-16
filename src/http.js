@@ -47,8 +47,18 @@ async function createReminder({ text, date }) {
   return res.json();
 }
 
+async function removeReminder(id) {
+  const res = await fetch(apiUrl + `/reminder/${id}`, {
+    method: "DELETE",
+    headers: getHeaders()
+  });
+
+  return res.json();
+}
+
 export {
   areMessagesAllowed,
   getReminders,
-  createReminder
+  createReminder,
+  removeReminder
 };

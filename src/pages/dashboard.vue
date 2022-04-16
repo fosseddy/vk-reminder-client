@@ -57,6 +57,23 @@ export default {
 
       this.text = "";
       this.date = "";
+    },
+
+    async removeReminder(id) {
+      let err = null;
+      const res = await http.removeReminder(id).catch(e => err = e);
+
+      // @TODO(art): handle error
+      if (err) {
+        return console.error(err);
+      }
+
+      // @TODO(art): handle error
+      if (res.error) {
+        return console.error(res.error);
+      }
+
+      this.reminders = this.reminders.filter(r => r._id !== id);
     }
   },
 
@@ -101,7 +118,12 @@ export default {
   </form>
 
   <ul>
-    <li v-for="r in reminders">{{ r.text }}</li>
+    <li
+      v-for="r in reminders"
+      @click="removeReminder(r._id)"
+    >
+      {{ r.text }}
+    </li>
   </ul>
 </div>
 </template>
