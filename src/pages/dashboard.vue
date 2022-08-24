@@ -37,10 +37,14 @@ export default {
     async addReminder() {
       if (!this.text || !this.date) return;
 
+      const t = new Date(this.date).toISOString()
+        .replace("T", " ")
+        .replace("Z", "");
+
       let err = null;
       const res = await http.createReminder({
         text: this.text,
-        date: new Date(this.date).getTime()
+        date: t
       }).catch(e => err = e);
 
       // @TODO(art): handle error
@@ -53,7 +57,7 @@ export default {
         return console.error(res.error);
       }
 
-      this.reminders.push(res.data);
+      this.reminders.unshift(res.data);
 
       this.text = "";
       this.date = "";
@@ -73,7 +77,7 @@ export default {
         return console.error(res.error);
       }
 
-      this.reminders = this.reminders.filter(r => r._id !== id);
+      this.reminders = this.reminders.filter(r => r.id !== id);
     }
   },
 
@@ -91,7 +95,7 @@ export default {
       return console.error(res.error);
     }
 
-    this.reminders = res.data.items;
+    this.reminders = res.data.items.reverse();
   }
 };
 </script>
@@ -118,11 +122,8 @@ export default {
   </form>
 
   <ul>
-    <li
-      v-for="r in reminders"
-      @click="removeReminder(r._id)"
-    >
-      {{ r.text }}
+    <li v-for="r in reminders" @click="removeReminder(r.id)">
+      {{ r.message }}
     </li>
   </ul>
 </div>

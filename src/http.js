@@ -56,9 +56,21 @@ async function removeReminder(id) {
   return res.json();
 }
 
+async function updateReminder(r) {
+  const { _id, ...body } = r;
+  const res = await fetch(apiUrl + `/reminder/${_id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+    body: JSON.stringify(body)
+  });
+
+  return res.json();
+}
+
 export {
   areMessagesAllowed,
   getReminders,
   createReminder,
-  removeReminder
+  removeReminder,
+  updateReminder
 };
