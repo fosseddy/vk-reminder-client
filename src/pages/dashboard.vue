@@ -37,14 +37,10 @@ export default {
     async addReminder() {
       if (!this.text || !this.date) return;
 
-      const t = new Date(this.date).toISOString()
-        .replace("T", " ")
-        .replace("Z", "");
-
       let err = null;
       const res = await http.createReminder({
         text: this.text,
-        date: t
+        date: new Date(this.date).toISOString()
       }).catch(e => err = e);
 
       // @TODO(art): handle error
