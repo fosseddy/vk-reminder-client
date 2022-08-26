@@ -37,11 +37,11 @@ async function getReminder(id) {
   return res.json();
 }
 
-async function createReminder({ text, date }) {
+async function createReminder({ message, date }) {
   const res = await fetch(apiUrl + "/reminder", {
     method: "POST",
     headers: getHeaders(),
-    body: JSON.stringify({ text, date })
+    body: JSON.stringify({ message, date })
   });
 
   return res.json();
@@ -57,8 +57,8 @@ async function removeReminder(id) {
 }
 
 async function updateReminder(r) {
-  const { _id, ...body } = r;
-  const res = await fetch(apiUrl + `/reminder/${_id}`, {
+  const { id, ...body } = r;
+  const res = await fetch(apiUrl + `/reminder/${id}`, {
     method: "DELETE",
     headers: getHeaders(),
     body: JSON.stringify(body)

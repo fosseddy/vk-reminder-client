@@ -39,7 +39,7 @@ export default {
 
       let err = null;
       const res = await http.createReminder({
-        text: this.text,
+        message: this.text,
         date: new Date(this.date).toISOString()
       }).catch(e => err = e);
 
@@ -118,7 +118,10 @@ export default {
   </form>
 
   <ul>
-    <li v-for="r in reminders" @click="removeReminder(r.id)">
+    <li v-for="r in reminders"
+        @click="removeReminder(r.id)"
+        :class="{ done: r.is_done }"
+    >
       {{ r.message }}
     </li>
   </ul>
@@ -126,4 +129,7 @@ export default {
 </template>
 
 <style scoped>
+.done {
+  text-decoration: line-through;
+}
 </style>
