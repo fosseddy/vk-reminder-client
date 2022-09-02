@@ -23,8 +23,9 @@ export default {
   methods: {
     async logout() {
       await VK.Auth.logoutAsync();
-      storage.UserId.remove();
-      storage.SessionHeader.remove();
+      // @TODO(art): storage.clear() or something?
+      storage.removeUserId();
+      storage.removeSessionHeader();
       this.$store.commit("auth/setUser", null);
       this.$router.push("/");
     },

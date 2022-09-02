@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { store } from "@/store";
 import { router } from "@/router";
 
-import "@/vk";
+//import "@/vk";
 
 import App from "@/app.vue";
 

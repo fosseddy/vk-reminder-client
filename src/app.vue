@@ -5,7 +5,7 @@ import * as storage from "@/storage";
 export default {
   async created() {
     const { session } = await VK.Auth.getLoginStatusAsync();
-    const id = storage.UserId.get();
+    const id = storage.getUserId();
 
     if (!session || !id) return;
 
@@ -16,7 +16,7 @@ export default {
     if (!user) return;
 
     delete session.user;
-    storage.SessionHeader.set({
+    storage.setSessionHeader({
       ...session,
       userId: user.id
     });

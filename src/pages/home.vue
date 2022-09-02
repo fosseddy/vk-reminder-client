@@ -17,8 +17,8 @@ export default {
       if (!user) return;
 
       delete session.user;
-      storage.UserId.set(user.id);
-      storage.SessionHeader.set({
+      storage.setUserId(user.id);
+      storage.setSessionHeader({
         ...session,
         userId: user.id
       });

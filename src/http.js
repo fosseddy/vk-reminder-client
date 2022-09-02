@@ -6,7 +6,7 @@ const apiUrl = "http://localhost:5000/api";
 function getHeaders() {
   return {
     "Content-Type": "application/json",
-    "VK-Session": storage.SessionHeader.get()
+    "VK-Session": storage.getSessionHeader()
   };
 }
 

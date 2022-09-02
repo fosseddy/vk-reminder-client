@@ -1,34 +1,41 @@
-const StorageItem = { key: null };
-
-StorageItem.get = function() {
-  return localStorage.getItem(this.key);
-}
-
-StorageItem.set = function(val) {
-  localStorage.setItem(this.key, val);
-}
-
-StorageItem.remove = function() {
-  localStorage.removeItem(this.key);
-}
-
-function createStorageItem(key) {
-  return Object.create(StorageItem, {
-    key: { value: key }
-  });
-}
-
-const UserId = createStorageItem("vk-user-id");
-
-const SessionHeader = createStorageItem("vk-session-header");
-SessionHeader.set = function(opts) {
-  localStorage.setItem(
-    this.key,
-    Object.entries(opts).map(kv => kv.join("=")).join("&")
-  );
-}
-
-export {
-  UserId,
-  SessionHeader
+const Key = {
+  UserId: "vk-user-id",
+  SessionHeader: "vk-session-header"
 };
+
+function get(key) {
+  return localStorage.getItem(key);
+}
+
+function set(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function remove(key) {
+  localStorage.remove(key);
+}
+
+export function getUserId() {
+  return get(Key.UserId);
+}
+
+export function setUserId(val) {
+  return set(Key.UserId, val);
+}
+
+export function removeUserId() {
+  return remove(Key.UserId);
+}
+
+export function getSessionHeader() {
+  return get(Key.SessionHeader);
+}
+
+export function setSessionHeader(opts) {
+  const val =  Object.entries(opts).map(kv => kv.join("=")).join("&");
+  return set(Key.SessionHeader, val);
+}
+
+export function removeSessionHeader() {
+  return remove(Key.SessionHeader);
+}
