@@ -1,4 +1,4 @@
-<script>
+<!--script>
 import * as http from "@/http";
 import * as storage from "@/storage";
 
@@ -44,8 +44,17 @@ export default {
     this.$router.push(res.data.allowed ? "/dashboard" : "/allow-messages");
   }
 };
+</script-->
+
+<script>
+import Calendar from "@/components/calendar.vue";
+
+export default {
+  components: { Calendar }
+}
 </script>
 
 <template>
-<router-view></router-view>
+<Calendar />
+<!--router-view></router-view-->
 </template>
