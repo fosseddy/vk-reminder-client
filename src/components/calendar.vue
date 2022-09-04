@@ -1,6 +1,4 @@
 <script>
-const MONTH_START = 0;
-const MONTH_END = 11;
 const MONTH_NAMES = [
   "Jan", "Feb", "Mar", "Apr",
   "May", "Jun", "Jul", "Aug",
@@ -12,18 +10,27 @@ const WEEKDAY_COUNT = 7;
 
 const CALENDAR_ROWS = 6;
 
+function areDatesEqual(d1, d2) {
+  return d1.getDate() === d2.getDate() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getFullYear() === d2.getFullYear();
+}
+
 export default {
+  props: ["selected"],
+  emits: ["change"],
+
   data() {
     return {
-      year: 0,
-      month: 0,
+      date: null,
+      today: null,
       calendar: []
     };
   },
 
   computed: {
     monthName() {
-      return MONTH_NAMES[this.month];
+      return MONTH_NAMES[this.date.getMonth()];
     },
     weekdayNames() {
       return WEEKDAY_NAMES;
@@ -31,60 +38,76 @@ export default {
   },
 
   created() {
-    const d = new Date();
-    this.year = d.getFullYear();
-    this.month = d.getMonth();
+    this.date = new Date();
+    this.today = new Date();
     this.createCalendar();
   },
 
   methods: {
     changeMonth(direction) {
-      this.month += direction;
-
-      if (this.month > MONTH_END) {
-        this.month = MONTH_START;
-        this.year += 1;
-      } else if (this.month < MONTH_START) {
-        this.month = MONTH_END;
-        this.year -= 1;
-      }
-
+      this.date.setMonth(this.date.getMonth() + direction);
+      this.date = new Date(this.date);
       this.createCalendar();
     },
 
-    createCalendar() {
-      this.calendar = [];
+    changeSelected(date) {
+      this.$emit("change", new Date(date));
+      if (date.getMonth() !== this.date.getMonth()) {
+        this.date = new Date(date);
+        this.createCalendar();
+      }
+    },
 
-      const lastMonthDay = new Date(this.year, this.month + 1, 0).getDate();
-      const prevLastMonthDay = new Date(this.year, this.month, 0).getDate();
-      const firstWeekDay = new Date(this.year, this.month, 1).getDay();
+    isActive(date) {
+      return this.date.getMonth() === date.getMonth();
+    },
+
+    isToday(date) {
+      return areDatesEqual(this.today, date);
+    },
+
+    isSelected(date) {
+      return areDatesEqual(this.selected, date);
+    },
+
+    createCalendar() {
+      const result = [];
 
       let row = [];
-      let weekDay = 0;
       let monthDay = 1;
+      let weekDay = 0;
 
       // fill last days of the previous month
-      while (weekDay !== firstWeekDay) {
-        row[weekDay] = prevLastMonthDay - firstWeekDay + weekDay + 1;
+      const firstWeekDay = new Date(
+        this.date.getFullYear(),
+        this.date.getMonth(),
+        1
+      );
+      let offset = firstWeekDay.getDay();
+      while (weekDay !== firstWeekDay.getDay()) {
+        const d = new Date(firstWeekDay);
+        d.setDate(d.getDate() - offset);
+        row[weekDay] = d;
         weekDay += 1;
+        offset -= 1;
       }
 
+      // fill days of the current month and first days of the next month
       for (let _ = 0; _ < CALENDAR_ROWS; _++) {
         while (weekDay < WEEKDAY_COUNT) {
-          row[weekDay] = monthDay;
+          const d = new Date(this.date);
+          d.setDate(monthDay);
+          row[weekDay] = d;
           weekDay += 1;
           monthDay += 1;
-
-          // fill first days of the next month
-          if (monthDay > lastMonthDay) {
-            monthDay = 1;
-          }
         }
 
-        this.calendar.push(row);
+        result.push(row);
         row = [];
         weekDay = 0;
       }
+
+      this.calendar = result;
     }
   }
 }
@@ -94,7 +117,7 @@ export default {
 <div>
   <div class="controls">
     <button @click="changeMonth(-1)">&lt;</button>
-    <p>{{ monthName }} {{ year }}</p>
+    <p>{{ monthName }} {{ date.getFullYear() }}</p>
     <button @click="changeMonth(1)">&gt;</button>
   </div>
 
@@ -103,8 +126,17 @@ export default {
       <tr>
         <th style="padding-right: 1rem;" v-for="n in weekdayNames">{{ n }}</th>
       </tr>
-      <tr v-for="item in calendar">
-        <th v-for="i in item">{{ i }}</th>
+      <tr v-for="row in calendar">
+        <td v-for="date in row"
+            @click="changeSelected(date)"
+            :class="{
+              active: isActive(date),
+              today: isToday(date),
+              selected: isSelected(date)
+            }"
+        >
+          {{ date.getDate() }}
+        </td>
       </tr>
     </table>
   </div>
@@ -125,14 +157,19 @@ export default {
   padding: .3rem 1rem;
 }
 
-.row {
-  display: flex;
-  width: 250px;
-  justify-content: space-between;
+td, th {
+  color: lightgray;
 }
 
-.row div {
-  width: 20px;
-  text-align: right;
+td.active {
+  color: black;
+}
+
+td.today {
+  color: blue;
+}
+
+td.selected {
+  color: red;
 }
 </style>

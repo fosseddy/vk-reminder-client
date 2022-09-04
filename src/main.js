@@ -4,7 +4,7 @@ import { router } from "@/router";
 
 import "@/index.css";
 
-//import "@/vk";
+import "@/vk";
 
 import App from "@/app.vue";
 
