@@ -1,16 +1,17 @@
 <script>
 import VKAllowMessages from "@/components/vk-allow-messages.vue";
+import DatetimePicker from "@/components/datetime-picker.vue";
 import * as http from "@/http";
 import * as storage from "@/storage";
 
 export default {
-  components: { VKAllowMessages },
+  components: { VKAllowMessages, DatetimePicker },
 
   data() {
     return {
       reminders: [],
       text: "",
-      date: ""
+      date: new Date()
     };
   },
 
@@ -36,12 +37,13 @@ export default {
     },
 
     async addReminder() {
+      console.log("addReminder()");
       if (!this.text || !this.date) return;
 
       let err = null;
       const res = await http.createReminder({
         message: this.text,
-        date: new Date(this.date).toISOString()
+        date: this.date.toISOString()
       }).catch(e => err = e);
 
       // @TODO(art): handle error
@@ -57,7 +59,7 @@ export default {
       this.reminders.unshift(res.data);
 
       this.text = "";
-      this.date = "";
+      this.date = new Date();
     },
 
     async removeReminder(id) {
@@ -114,7 +116,7 @@ export default {
 
   <form @submit.prevent="addReminder">
     <input type="text" v-model="text" />
-    <input type="datetime-local" v-model="date" />
+    <DatetimePicker :selected="date" @change="d => date = d" />
     <button type="submit">Add</button>
   </form>
 

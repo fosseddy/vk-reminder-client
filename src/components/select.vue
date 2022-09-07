@@ -9,6 +9,14 @@ export default {
     };
   },
 
+  mounted() {
+    document.addEventListener("click", this.handleClickOutside);
+  },
+
+  destroyed() {
+    document.removeEventListener("click", this.handleClickOutside);
+  },
+
   methods: {
     changeValue(v) {
       this.$emit("value-change", v);
@@ -17,6 +25,12 @@ export default {
 
     toggleOptions() {
       this.open = !this.open;
+      if (this.open) {
+        const opts = this.$refs["select"]
+          .querySelector(`.select__option--${this.value}`);
+
+        opts.scrollIntoView();
+      }
     },
 
     handleClickOutside(e) {
@@ -26,14 +40,6 @@ export default {
         }
       }
     }
-  },
-
-  mounted() {
-    document.addEventListener("click", this.handleClickOutside);
-  },
-
-  destroyed() {
-    document.removeEventListener("click", this.handleClickOutside);
   }
 };
 </script>
@@ -45,9 +51,10 @@ export default {
   </div>
 
   <div class="select__options" :class="{ 'select__options--open': open }">
-    <div class="select__option"
-         v-for="opt in options"
+    <div v-for="opt in options"
          @click="changeValue(opt)"
+         class="select__option"
+         :class="'select__option--'+opt"
     >
       {{ opt }}
     </div>
