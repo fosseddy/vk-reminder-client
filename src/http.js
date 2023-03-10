@@ -1,76 +1,51 @@
 import * as storage from "@/storage";
 
-// @TODO(art): make it env dependent
+// @Todo(art): make it env dependent
 const apiUrl = "http://localhost:5000/api";
 
 function getHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "VK-Session": storage.getSessionHeader()
-  };
+    return {
+        "Content-Type": "application/json",
+        "VK-Session": storage.getSessionHeader()
+    };
 }
 
-async function areMessagesAllowed() {
-  const res = await fetch(apiUrl + "/messages/check", {
-    method: "GET",
-    headers: getHeaders()
-  });
-
-  return res.json();
+async function request(method, uri, body = null) {
+    const opts = {
+        method,
+        headers: getHeaders()
+    };
+    if (body) {
+        opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(apiUrl + uri, opts);
+    return res.json();
 }
 
-async function getReminders() {
-  const res = await fetch(apiUrl + "/reminder", {
-    method: "GET",
-    headers: getHeaders()
-  });
+export const messages = {};
+export const reminder = {};
 
-  return res.json();
+messages.allowed = async function() {
+    return request("GET", "/messages/check");
 }
 
-async function getReminder(id) {
-  const res = await fetch(apiUrl + `/reminder/${id}`, {
-    method: "GET",
-    headers: getHeaders()
-  });
-
-  return res.json();
+reminder.all = async function() {
+    return request("GET", "/reminder");
 }
 
-async function createReminder({ message, date }) {
-  const res = await fetch(apiUrl + "/reminder", {
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify({ message, date })
-  });
-
-  return res.json();
+reminder.one = async function(id) {
+    return request("GET", `/reminder/${id}`);
 }
 
-async function removeReminder(id) {
-  const res = await fetch(apiUrl + `/reminder/${id}`, {
-    method: "DELETE",
-    headers: getHeaders()
-  });
-
-  return res.json();
+reminder.create = async function({ message, date }) {
+    return request("POST", "/reminder", { message, date });
 }
 
-async function updateReminder(r) {
-  const { id, ...body } = r;
-  const res = await fetch(apiUrl + `/reminder/${id}`, {
-    method: "DELETE",
-    headers: getHeaders(),
-    body: JSON.stringify(body)
-  });
-
-  return res.json();
+reminder.update = async function(r) {
+    const { id, ...body } = r;
+    return request("PUT", `/reminder/${id}`, body);
 }
 
-export {
-  areMessagesAllowed,
-  getReminders,
-  createReminder,
-  removeReminder,
-  updateReminder
-};
+reminder.remove = async function(id) {
+    return request("DELETE", `/reminder/${id}`);
+}

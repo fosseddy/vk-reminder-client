@@ -3,49 +3,60 @@ import * as http from "@/http";
 import * as storage from "@/storage";
 
 export default {
-  async created() {
-    const { session } = await VK.Auth.getLoginStatusAsync();
-    const id = storage.getUserId();
+    data() {
+        return {
+            loading: true,
+            error: null
+        };
+    },
 
-    if (!session || !id) return;
+    async created() {
+        try {
+            const { session } = await VK.Auth.getLoginStatusAsync();
+            const id = storage.getUserId();
+            if (!session || !id) return;
 
-    const { response } = await VK.Api.getUserInfo(id);
-    const user = response[0];
+            const { response } = await VK.Api.getUserInfo(id);
+            const user = response[0];
+            if (!user) return;
 
-    // @NOTE(art): technically this will never happen
-    if (!user) return;
+            delete session.user;
+            storage.setSessionHeader({
+                ...session,
+                userId: user.id
+            });
 
-    delete session.user;
-    storage.setSessionHeader({
-      ...session,
-      userId: user.id
-    });
+            this.$store.commit("auth/setUser", {
+                id: user.id,
+                firstname: user.first_name,
+                lastname: user.last_name,
+                avatar: user.photo_100
+            });
 
-    this.$store.commit("auth/setUser", {
-      id: user.id,
-      firstname: user.first_name,
-      lastname: user.last_name,
-      avatar: user.photo_100
-    });
+            const res = await http.messages.allowed();
+            if (res.error) {
+                console.error(res.error);
+                this.error = res.error.message;
+                return;
+            }
 
-    let err = null;
-    const res = await http.areMessagesAllowed().catch(e => err = e);
-
-    // @TODO(art): handle error
-    if (err) {
-      return console.error(err);
+            const r = res.data.allowed ? "/dashboard" : "/allow-messages";
+            await this.$router.push(r);
+        } catch(err) {
+            console.error(err);
+            this.error = "Something went wrong. Please try again later";
+        } finally {
+            this.loading = false;
+        }
     }
-
-    // @TODO(art): handle error
-    if (res.error) {
-      return console.error(res.error);
-    }
-
-    this.$router.push(res.data.allowed ? "/dashboard" : "/allow-messages");
-  }
 };
 </script>
 
 <template>
-<router-view></router-view>
+    <h1 v-if="loading">App is loading...</h1>
+    <div v-else-if="error">
+        <h1>There was an error</h1>
+        <p>{{ error }}</p>
+    </div>
+    <router-view v-else></router-view>
 </template>
